@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SafeAgent | Register</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .bg-ai {
+            background-color: #0c1120;
+            background-image: radial-gradient(circle at 80% 50%, #172a50 0%, #0c1120 100%);
+        }
+        .grid-overlay {
+            background-image: linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px),
+                              linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px);
+            background-size: 40px 40px;
+        }
+    </style>
+</head>
+<body class="bg-ai min-h-screen flex items-center overflow-hidden">
+    <div class="grid-overlay absolute inset-0 z-0"></div>
+
+    <div class="container mx-auto flex flex-col lg:flex-row items-center justify-between px-12 lg:px-24 z-10">
+        
+        <div class="hidden lg:block max-w-lg text-left">
+            <h3 class="text-blue-500 font-black text-sm tracking-[0.3em] mb-4 uppercase">Network Node Initialization</h3>
+            <h1 class="text-5xl font-black text-white leading-tight mb-6 italic">JOIN THE <br>OPERATOR <span class="text-orange-500">FLEET</span></h1>
+            <p class="text-slate-400 text-sm leading-relaxed">
+                Establish a new secure connection point for AI Monitoring and Maintenance. 
+                Configure your operator profile to begin automated model drift surveillance.
+            </p>
+        </div>
+
+        <div class="w-full max-w-sm">
+            <div class="bg-white p-8 rounded-2xl shadow-2xl">
+                <div class="text-center mb-6">
+                    <h2 class="text-2xl font-black text-slate-900 uppercase italic tracking-tighter">Initialize Node</h2>
+                    <p class="text-slate-500 text-xs">Operator Profile Setup</p>
+                </div>
+
+                <form action="{{ url_for('register') }}" method="POST" class="space-y-4">
+                    <div>
+                        <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Full Name</label>
+                        <input type="text" name="name" required placeholder="Udit" class="w-full px-4 py-3 text-sm rounded-lg border border-slate-200 outline-none transition bg-slate-50">
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Email Link</label>
+                        <input type="email" name="email" required placeholder="operator@safeagent.ai" class="w-full px-4 py-3 text-sm rounded-lg border border-slate-200 outline-none transition bg-slate-50">
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Create Key</label>
+                        <input type="password" name="password" required placeholder="••••••••" class="w-full px-4 py-3 text-sm rounded-lg border border-slate-200 outline-none transition bg-slate-50">
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Verify Key</label>
+                        <input type="password" name="confirm_password" required placeholder="••••••••" class="w-full px-4 py-3 text-sm rounded-lg border border-slate-200 outline-none transition bg-slate-50">
+                    </div>
+
+                    <button type="submit" class="w-full bg-blue-600 text-white font-black py-3 rounded-lg hover:bg-blue-700 transition shadow-lg uppercase tracking-widest text-xs">
+                        Start Initialization
+                    </button>
+                </form>
+
+                <p class="mt-8 text-center text-xs text-slate-400">
+                    Already an operator? <a href="{{ url_for('login') }}" class="text-blue-600 font-black hover:underline tracking-tighter uppercase">Authenticate</a>
+                </p>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

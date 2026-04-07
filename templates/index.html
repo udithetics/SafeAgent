@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SafeAgent | Home</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body class="bg-white text-slate-900 font-sans">
+    <nav class="flex justify-between items-center px-6 py-4 max-w-6xl mx-auto">
+        <div class="text-2xl font-bold text-blue-600">SafeAgent</div>
+        <div class="space-x-4">
+            <a href="{{ url_for('login') }}" class="font-medium hover:text-blue-600 transition">Log In</a>
+            <a href="{{ url_for('register') }}" class="bg-blue-600 text-white px-5 py-2 rounded-lg font-bold hover:bg-blue-700 transition">Get Started</a>
+        </div>
+    </nav>
+
+    <main class="max-w-4xl mx-auto text-center py-20 px-4">
+        <h1 class="text-5xl md:text-6xl font-extrabold mb-6 tracking-tight">Your AI models, <span class="text-blue-600">protected.</span></h1>
+        <p class="text-xl text-slate-600 mb-10">SafeAgent monitors your ML models 24/7 to ensure they are performing correctly and staying secure. No complex setup required.</p>
+        
+        <div class="grid md:grid-cols-2 gap-6 text-left">
+            <div class="p-6 border rounded-xl hover:shadow-md transition">
+                <i class="fas fa-microchip text-blue-600 text-2xl mb-4"></i>
+                <h3 class="font-bold text-lg">Smart Monitoring</h3>
+            
+            </div>
+            <div class="p-6 border rounded-xl hover:shadow-md transition">
+                <i class="fas fa-shield-alt text-blue-600 text-2xl mb-4"></i>
+                <h3 class="font-bold text-lg">Instant Security</h3>
+                <p class="text-slate-500">Keeps your data safe with standardized MCP security protocols.</p>
+            </div>
+        </div>
+    </main>
+</body>
+</html>
