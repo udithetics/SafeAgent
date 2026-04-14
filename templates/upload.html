@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MCP AI Auditor | System Upload</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #4F46E5;
+            --primary-glow: rgba(79, 70, 229, 0.15);
+            --secondary: #64748B;
+            --success: #10B981;
+            --warning: #F59E0B;
+            --danger: #EF4444;
+            --bg-body: #F3F4F6;
+            --bg-card: #FFFFFF;
+            --text-main: #1F2937;
+            --text-muted: #6B7280;
+            --sidebar-width: 280px;
+            --border-ui: #E5E7EB;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+        }
+
+        /* SIDEBAR (Match Dashboard) */
+        .sidebar {
+            width: var(--sidebar-width);
+            background: #111827;
+            padding: 30px;
+            display: flex;
+            flex-direction: column;
+            position: fixed;
+            height: 100vh;
+            z-index: 1000;
+        }
+
+        .brand {
+            font-size: 1.6rem;
+            font-weight: 700;
+            margin-bottom: 40px;
+            color: #818CF8;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .nav-item {
+            padding: 14px 18px;
+            border-radius: 12px;
+            margin-bottom: 10px;
+            color: #9CA3AF;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .nav-item:hover {
+            background: rgba(255, 255, 255, 0.05);
+            color: white;
+        }
+
+        .nav-item.active {
+            background: var(--primary);
+            color: white;
+            box-shadow: 0 4px 12px var(--primary-glow);
+        }
+
+        /* MAIN CONTENT */
+        .main-content {
+            margin-left: var(--sidebar-width);
+            padding: 40px;
+            flex: 1;
+            width: calc(100% - var(--sidebar-width));
+        }
+
+        .top-bar {
+            margin-bottom: 40px;
+            border-bottom: 1px solid var(--border-ui);
+            padding-bottom: 20px;
+        }
+
+        .top-bar h1 {
+            font-size: 2.2rem;
+            font-weight: 800;
+            color: #111827;
+            letter-spacing: -0.04em;
+        }
+
+        .top-bar p {
+            color: var(--text-muted);
+            margin-top: 5px;
+        }
+
+        /* UPLOAD SECTION */
+        .upload-container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .card {
+            background: var(--bg-card);
+            border-radius: 24px;
+            border: 1px solid var(--border-ui);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05);
+            padding: 40px;
+            margin-bottom: 30px;
+        }
+
+        .section-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: #111827;
+        }
+
+        .upload-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .drop-zone {
+            border: 2px dashed #D1D5DB;
+            border-radius: 20px;
+            padding: 30px;
+            text-align: center;
+            transition: all 0.3s;
+            background: #F9FAFB;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .drop-zone:hover {
+            border-color: var(--primary);
+            background: #EEF2FF;
+            transform: translateY(-2px);
+        }
+
+        .drop-zone svg {
+            width: 48px;
+            height: 48px;
+            color: var(--primary);
+            margin-bottom: 15px;
+            opacity: 0.7;
+        }
+
+        .drop-zone h3 {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .drop-zone p {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        .file-input {
+            position: absolute;
+            inset: 0;
+            opacity: 0;
+            cursor: pointer;
+        }
+
+        .form-footer {
+            text-align: center;
+            padding-top: 20px;
+            border-top: 1px solid var(--border-ui);
+        }
+
+        .btn-large {
+            padding: 18px 40px;
+            background: #4F46E5;
+            color: white;
+            border: none;
+            border-radius: 16px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 10px 20px -5px var(--primary-glow);
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .btn-large:hover {
+            background: #4338CA;
+            transform: translateY(-2px);
+            box-shadow: 0 15px 30px -5px var(--primary-glow);
+        }
+
+        .btn-large:active {
+            transform: scale(0.98);
+        }
+
+        /* STATUS BADGE */
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 12px;
+            border-radius: 99px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .badge-indigo {
+            background: #EEF2FF;
+            color: #4338CA;
+        }
+
+        .file-status {
+            margin-top: 15px;
+            font-size: 0.85rem;
+            color: #10B981;
+            font-weight: 600;
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- SIDEBAR -->
+    <div class="sidebar">
+        <div class="brand">⚡ MCP Auditor</div>
+        <a href="/" class="nav-item"><span>🏠</span> Dashboard</a>
+        <a href="/upload" class="nav-item active"><span>📤</span> Upload System</a>
+        <a href="#" class="nav-item"><span>📄</span> Audit Logs</a>
+        <a href="#" class="nav-item"><span>⚙️</span> Settings</a>
+    </div>
+
+    <div class="main-content">
+        <div class="top-bar">
+            <h1>System Injection</h1>
+            <p>Deploy your trained model and reference dataset for self-auditing.</p>
+        </div>
+
+        <div class="upload-container">
+            <form action="/upload" method="POST" enctype="multipart/form-data" id="uploadForm">
+                <div class="card">
+                    <div class="section-title">
+                        <span class="badge badge-indigo">Step 01</span>
+                        Model & Data Assets
+                    </div>
+
+                    <div class="upload-grid">
+                        <!-- MODEL UPLOAD -->
+                        <div class="drop-zone" id="modelZone">
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+                            </svg>
+                            <h3>AI Model</h3>
+                            <p>.joblib or .pkl files</p>
+                            <input type="file" name="model_file" class="file-input"
+                                onchange="updateFileStatus(this, 'modelStatus')">
+                            <div id="modelStatus" class="file-status">✓ File Selected</div>
+                        </div>
+
+                        <!-- DATASET UPLOAD -->
+                        <div class="drop-zone" id="dataZone">
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                            </svg>
+                            <h3>Reference Data</h3>
+                            <p>CSV dataset for baseline</p>
+                            <input type="file" name="data_file" class="file-input"
+                                onchange="updateFileStatus(this, 'dataStatus')">
+                            <div id="dataStatus" class="file-status">✓ File Selected</div>
+                        </div>
+                    </div>
+
+                    <div class="form-footer">
+                        <button type="submit" class="btn-large">
+                            <span>🚀</span> Run System Audit
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function updateFileStatus(input, statusId) {
+            const statusDiv = document.getElementById(statusId);
+            if (input.files.length > 0) {
+                statusDiv.textContent = `✓ ${input.files[0].name}`;
+                statusDiv.style.display = 'block';
+                input.parentElement.style.borderColor = '#10B981';
+                input.parentElement.style.background = '#F0FDF4';
+            }
+        }
+    </script>
+</body>
+
+</html>
