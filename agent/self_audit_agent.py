@@ -41,33 +41,39 @@ class SelfAuditingAgent:
         report["metrics"]["health"] = health
         
         # Rule: If confidence drops below 0.6, flag it.
-        if health.get("avg_confidence", 1.0) < 0.6:
-            report["issues"].append("Low Average Confidence detected.")
-            report["risk_score"] += (20 * self.multiplier)
+        if isinstance(health, dict) and "avg_confidence" in health:
+            if health.get("avg_confidence", 1.0) < 0.6:
+                report["issues"].append("Low Average Confidence detected.")
+                report["risk_score"] += (20 * self.multiplier)
+        elif isinstance(health, dict) and "status" in health and health["status"] == "No data":
+             report["issues"].append("System health check: Waiting for more data...")
 
         # --- STEP 2: Check Drift ---
         drift = tools.check_feature_drift(recent_window=50)
         report["metrics"]["drift"] = drift
         
         drift_count = 0
-        for feature, data in drift.items():
-            if data["is_drifting"]:
-                drift_count += 1
-                report["issues"].append(f"Major Data Drift detected in {feature} (Score: {data['drift_score']:.2f})")
+        if isinstance(drift, dict) and "error" not in drift and "status" not in drift:
+            for feature, data in drift.items():
+                if isinstance(data, dict) and data.get("is_drifting"):
+                    drift_count += 1
+                    report["issues"].append(f"Major Data Drift detected in {feature} (Score: {data['drift_score']:.2f})")
+        elif isinstance(drift, dict) and "error" in drift:
+            report["issues"].append(f"Audit limitation: {drift['error']}")
         
         if drift_count > 0:
             report["risk_score"] += (drift_count * 15 * self.multiplier) 
 
         # --- STEP 3: Smart Performance Check ---
         # Get recent performance from health data
-        accuracy = health.get("estimated_accuracy")
+        accuracy = health.get("estimated_accuracy") if isinstance(health, dict) else None
         
         # Get recent prediction stats
         recents = tools.get_recent_predictions(limit=50)
-        if recents:
+        if isinstance(recents, list) and recents and "error" not in recents[0]:
             # Check for label imbalance (formerly "failure rate")
             # We only penalize this if accuracy is also low or unknown.
-            positives = [r for r in recents if r['prediction'] == 1]
+            positives = [r for r in recents if isinstance(r, dict) and r.get('prediction') == 1]
             pos_rate = len(positives) / len(recents)
             report["metrics"]["pos_rate"] = pos_rate
             report["metrics"]["fail_rate"] = pos_rate # Legacy alias for dashboard UI

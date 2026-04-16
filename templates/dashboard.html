@@ -437,13 +437,14 @@
         <div class="grid-3">
             <div class="card">
                 <div class="stat-item">
-                    <div class="stat-val">{{ "%.2f"|format(report.metrics.health.avg_confidence) }}</div>
+                    <div class="stat-val">{{ "%.2f"|format(report.metrics.health.get('avg_confidence', 0)) }}</div>
                     <div class="stat-lbl">Avg Confidence</div>
                 </div>
             </div>
             <div class="card">
                 <div class="stat-item">
-                    <div class="stat-val">{{ "%.1f"|format(report.metrics.health.estimated_accuracy * 100) }}%</div>
+                    <div class="stat-val">{{ "%.1f"|format(report.metrics.health.get('estimated_accuracy', 0) * 100) if
+                        report.metrics.health.get('estimated_accuracy') is not none else '0.0' }}%</div>
                     <div class="stat-lbl">Est. Accuracy</div>
                 </div>
             </div>
