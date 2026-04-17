@@ -43,7 +43,7 @@ with app.app_context():
     db.create_all()
 
 @app.route('/')
-def home():
+def index():
     return render_template('index.html')
 
 @app.route('/register', methods=['GET', 'POST'])
@@ -117,6 +117,12 @@ def login():
             print("DEBUG: Password match failed or user NOT found")
             flash('Invalid email or password.', 'error')
     return render_template('login.html')
+# --- LOGOUT ROUTE ---
+@app.route('/logout')
+def logout():
+    session.clear() # This safely destroys the user's login session
+    flash('System session terminated securely.', 'success')
+    return redirect(url_for('login'))
 
 @app.route('/dashboard', methods=['GET', 'POST'])   
 def dashboard():
