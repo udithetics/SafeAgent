@@ -1,320 +1,214 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MCP AI Auditor | System Upload</title>
+    <title>Upload System | SafeAgent</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
     <style>
         :root {
-            --primary: #4F46E5;
-            --primary-glow: rgba(79, 70, 229, 0.15);
-            --secondary: #64748B;
-            --success: #10B981;
-            --warning: #F59E0B;
-            --danger: #EF4444;
-            --bg-body: #F3F4F6;
-            --bg-card: #FFFFFF;
-            --text-main: #1F2937;
-            --text-muted: #6B7280;
-            --sidebar-width: 280px;
-            --border-ui: #E5E7EB;
-        }
-
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
+            --bg-color: #050505;
+            --surface: #121212;
+            --text-main: #f3f4f6;
+            --text-muted: #888888;
+            --accent: #4f46e5;
+            --border: #262626;
+            --success: #10b981;
         }
 
         body {
+            /* Applied the Outfit font here */
             font-family: 'Outfit', sans-serif;
-            background-color: var(--bg-body);
+            background-color: var(--bg-color);
             color: var(--text-main);
-            min-height: 100vh;
-            display: flex;
+            overflow-x: hidden;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.05'/%3E%3C/svg%3E");
         }
 
-        /* SIDEBAR (Match Dashboard) */
-        .sidebar {
-            width: var(--sidebar-width);
-            background: #111827;
-            padding: 30px;
+        /* --- SIDEBAR (Matches Dashboard) --- */
+        .wrapper { display: flex; min-height: 100vh; }
+        .sidebar { width: 260px; background: var(--surface); border-right: 1px solid var(--border); padding: 24px; display: flex; flex-direction: column; }
+        .sidebar-logo { font-size: 1.5rem; font-weight: 700; color: var(--text-main); text-decoration: none; letter-spacing: 1px; margin-bottom: 40px; display: flex; align-items: center; gap: 10px; }
+        .nav-item { color: var(--text-muted); text-decoration: none; padding: 12px 16px; border-radius: 8px; margin-bottom: 8px; display: flex; align-items: center; gap: 12px; transition: all 0.3s ease; font-weight: 500; }
+        .nav-item:hover, .nav-item.active { background: var(--accent); color: white; }
+        .config-box { margin-top: auto; background: var(--bg-color); border: 1px solid var(--border); padding: 16px; border-radius: 12px; }
+
+        /* --- MAIN CONTENT --- */
+        .main-content { flex: 1; padding: 40px; max-height: 100vh; overflow-y: auto; }
+        .header-top { margin-bottom: 40px; border-bottom: 1px solid var(--border); padding-bottom: 20px;}
+        .header-title h2 { font-weight: 700; margin: 0; font-size: 2.2rem; letter-spacing: -0.04em; }
+        .header-title p { color: var(--text-muted); margin: 0; font-size: 1rem; margin-top: 5px;}
+
+        /* --- UPLOAD UI STYLES --- */
+        .glass-card { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 40px; max-width: 900px; margin: 0 auto; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        
+        .drop-zone {
+            border: 2px dashed var(--border);
+            border-radius: 12px;
+            padding: 40px 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.01);
+            height: 100%;
             display: flex;
             flex-direction: column;
-            position: fixed;
-            height: 100vh;
-            z-index: 1000;
-        }
-
-        .brand {
-            font-size: 1.6rem;
-            font-weight: 700;
-            margin-bottom: 40px;
-            color: #818CF8;
-            display: flex;
+            justify-content: center;
             align-items: center;
-            gap: 12px;
-        }
-
-        .nav-item {
-            padding: 14px 18px;
-            border-radius: 12px;
-            margin-bottom: 10px;
-            color: #9CA3AF;
-            text-decoration: none;
-            font-weight: 500;
-            transition: all 0.2s;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .nav-item:hover {
-            background: rgba(255, 255, 255, 0.05);
-            color: white;
-        }
-
-        .nav-item.active {
-            background: var(--primary);
-            color: white;
-            box-shadow: 0 4px 12px var(--primary-glow);
-        }
-
-        /* MAIN CONTENT */
-        .main-content {
-            margin-left: var(--sidebar-width);
-            padding: 40px;
-            flex: 1;
-            width: calc(100% - var(--sidebar-width));
-        }
-
-        .top-bar {
-            margin-bottom: 40px;
-            border-bottom: 1px solid var(--border-ui);
-            padding-bottom: 20px;
-        }
-
-        .top-bar h1 {
-            font-size: 2.2rem;
-            font-weight: 800;
-            color: #111827;
-            letter-spacing: -0.04em;
-        }
-
-        .top-bar p {
-            color: var(--text-muted);
-            margin-top: 5px;
-        }
-
-        /* UPLOAD SECTION */
-        .upload-container {
-            max-width: 900px;
-            margin: 0 auto;
-        }
-
-        .card {
-            background: var(--bg-card);
-            border-radius: 24px;
-            border: 1px solid var(--border-ui);
-            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05);
-            padding: 40px;
-            margin-bottom: 30px;
-        }
-
-        .section-title {
-            font-size: 1.3rem;
-            font-weight: 700;
-            margin-bottom: 25px;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            color: #111827;
-        }
-
-        .upload-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 30px;
-            margin-bottom: 40px;
-        }
-
-        .drop-zone {
-            border: 2px dashed #D1D5DB;
-            border-radius: 20px;
-            padding: 30px;
-            text-align: center;
-            transition: all 0.3s;
-            background: #F9FAFB;
-            cursor: pointer;
             position: relative;
         }
 
         .drop-zone:hover {
-            border-color: var(--primary);
-            background: #EEF2FF;
+            border-color: var(--accent);
+            background: rgba(79, 70, 229, 0.05);
             transform: translateY(-2px);
         }
 
-        .drop-zone svg {
-            width: 48px;
-            height: 48px;
-            color: var(--primary);
+        .upload-icon {
+            font-size: 2.5rem;
+            color: var(--accent);
             margin-bottom: 15px;
-            opacity: 0.7;
+            transition: transform 0.3s ease;
         }
 
-        .drop-zone h3 {
-            font-size: 1rem;
-            font-weight: 600;
-            margin-bottom: 8px;
+        .drop-zone:hover .upload-icon {
+            transform: scale(1.1);
         }
 
-        .drop-zone p {
-            font-size: 0.85rem;
-            color: var(--text-muted);
-        }
+        .drop-zone h5 { font-weight: 600; margin-bottom: 5px; color: var(--text-main); font-size: 1.1rem; }
+        .drop-zone p { color: var(--text-muted); font-size: 0.9rem; margin: 0; }
 
         .file-input {
             position: absolute;
             inset: 0;
+            width: 100%;
+            height: 100%;
             opacity: 0;
             cursor: pointer;
-        }
-
-        .form-footer {
-            text-align: center;
-            padding-top: 20px;
-            border-top: 1px solid var(--border-ui);
-        }
-
-        .btn-large {
-            padding: 18px 40px;
-            background: #4F46E5;
-            color: white;
-            border: none;
-            border-radius: 16px;
-            font-size: 1.1rem;
-            font-weight: 700;
-            cursor: pointer;
-            transition: all 0.3s;
-            box-shadow: 0 10px 20px -5px var(--primary-glow);
-            display: inline-flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .btn-large:hover {
-            background: #4338CA;
-            transform: translateY(-2px);
-            box-shadow: 0 15px 30px -5px var(--primary-glow);
-        }
-
-        .btn-large:active {
-            transform: scale(0.98);
-        }
-
-        /* STATUS BADGE */
-        .badge {
-            display: inline-flex;
-            align-items: center;
-            padding: 6px 12px;
-            border-radius: 99px;
-            font-size: 0.75rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-        }
-
-        .badge-indigo {
-            background: #EEF2FF;
-            color: #4338CA;
+            z-index: 10;
         }
 
         .file-status {
             margin-top: 15px;
             font-size: 0.85rem;
-            color: #10B981;
+            color: var(--success);
             font-weight: 600;
             display: none;
         }
+
+        .btn-audit {
+            background-color: var(--accent);
+            color: white;
+            border: none;
+            padding: 14px 36px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+        }
+
+        .btn-audit:hover {
+            background-color: #4338ca;
+            box-shadow: 0 0 20px rgba(79, 70, 229, 0.4);
+            transform: translateY(-2px);
+        }
     </style>
 </head>
-
 <body>
-    <!-- SIDEBAR -->
-    <div class="sidebar">
-        <div class="brand">⚡ MCP Auditor</div>
-        <a href="/" class="nav-item"><span>🏠</span> Dashboard</a>
-        <a href="/upload" class="nav-item active"><span>📤</span> Upload System</a>
-        <a href="#" class="nav-item"><span>📄</span> Audit Logs</a>
-        <a href="#" class="nav-item"><span>⚙️</span> Settings</a>
-    </div>
 
-    <div class="main-content">
-        <div class="top-bar">
-            <h1>System Injection</h1>
-            <p>Deploy your trained model and reference dataset for self-auditing.</p>
+<div class="wrapper">
+    <aside class="sidebar">
+        <a href="{{ url_for('index') }}" class="sidebar-logo">
+            <i class="fa-solid fa-microchip text-primary"></i> SAFE.AGENT
+        </a>
+        
+        <nav>
+            <a href="{{ url_for('dashboard') }}" class="nav-item"><i class="fa-solid fa-chart-line"></i> Dashboard</a>
+            <a href="{{ url_for('upload') }}" class="nav-item active"><i class="fa-solid fa-upload"></i> Upload System</a>
+            <a href="#" class="nav-item"><i class="fa-solid fa-file-shield"></i> Audit Logs</a>
+            <a href="{{ url_for('logout') }}" class="nav-item text-danger mt-4"><i class="fa-solid fa-arrow-right-from-bracket"></i> Terminate Session</a>
+        </nav>
+
+        <div class="config-box">
+            <div class="card-title" style="margin-bottom: 10px; font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; font-weight: 600; letter-spacing: 0.05em;">Agent Config</div>
+            <form action="{{ url_for('dashboard') }}" method="GET">
+                <label class="form-label" style="font-size: 0.85rem; color: #888;">Sensitivity</label>
+                <select name="sensitivity" class="form-select form-select-sm bg-dark text-light border-secondary">
+                    <option value="Medium">Medium (Standard)</option>
+                    <option value="High">High (Strict)</option>
+                    <option value="Low">Low (Forgiving)</option>
+                </select>
+            </form>
+        </div>
+    </aside>
+
+    <main class="main-content">
+        <div class="header-top">
+            <div class="header-title">
+                <h2>System Injection</h2>
+                <p>Deploy your trained model and reference dataset for self-auditing.</p>
+            </div>
         </div>
 
-        <div class="upload-container">
+        <div class="glass-card">
             <form action="/upload" method="POST" enctype="multipart/form-data" id="uploadForm">
-                <div class="card">
-                    <div class="section-title">
-                        <span class="badge badge-indigo">Step 01</span>
-                        Model & Data Assets
-                    </div>
-
-                    <div class="upload-grid">
-                        <!-- MODEL UPLOAD -->
+                <div class="d-flex align-items-center mb-5">
+                    <span class="badge" style="background-color: rgba(79, 70, 229, 0.2); color: var(--accent); border: 1px solid var(--accent); padding: 8px 14px; font-weight: 600; letter-spacing: 1px; border-radius: 6px;">STEP 01</span>
+                    <h4 style="margin: 0; margin-left: 15px; font-weight: 600;">Model & Data Assets</h4>
+                </div>
+                
+                <div class="row g-4 mb-5">
+                    <div class="col-md-6">
                         <div class="drop-zone" id="modelZone">
-                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
-                            </svg>
-                            <h3>AI Model</h3>
+                            <i class="fa-solid fa-box-archive upload-icon"></i>
+                            <h5>AI Model</h5>
                             <p>.joblib or .pkl files</p>
-                            <input type="file" name="model_file" class="file-input"
-                                onchange="updateFileStatus(this, 'modelStatus')">
-                            <div id="modelStatus" class="file-status">✓ File Selected</div>
+                            <input type="file" name="model_file" class="file-input" accept=".joblib,.pkl" onchange="updateFileStatus(this, 'modelStatus')">
+                            <div id="modelStatus" class="file-status"><i class="fa-solid fa-check me-1"></i> File Selected</div>
                         </div>
-
-                        <!-- DATASET UPLOAD -->
+                    </div>
+                    
+                    <div class="col-md-6">
                         <div class="drop-zone" id="dataZone">
-                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                            </svg>
-                            <h3>Reference Data</h3>
+                            <i class="fa-solid fa-file-csv upload-icon"></i>
+                            <h5>Reference Data</h5>
                             <p>CSV dataset for baseline</p>
-                            <input type="file" name="data_file" class="file-input"
-                                onchange="updateFileStatus(this, 'dataStatus')">
-                            <div id="dataStatus" class="file-status">✓ File Selected</div>
+                            <input type="file" name="data_file" class="file-input" accept=".csv" onchange="updateFileStatus(this, 'dataStatus')">
+                            <div id="dataStatus" class="file-status"><i class="fa-solid fa-check me-1"></i> File Selected</div>
                         </div>
                     </div>
-
-                    <div class="form-footer">
-                        <button type="submit" class="btn-large">
-                            <span>🚀</span> Run System Audit
-                        </button>
-                    </div>
+                </div>
+                
+                <div class="text-center border-top pt-5" style="border-color: var(--border) !important;">
+                    <button type="submit" class="btn-audit">
+                        <i class="fa-solid fa-rocket me-2"></i> Run System Audit
+                    </button>
                 </div>
             </form>
         </div>
-    </div>
+    </main>
+</div>
 
-    <script>
-        function updateFileStatus(input, statusId) {
-            const statusDiv = document.getElementById(statusId);
-            if (input.files.length > 0) {
-                statusDiv.textContent = `✓ ${input.files[0].name}`;
-                statusDiv.style.display = 'block';
-                input.parentElement.style.borderColor = '#10B981';
-                input.parentElement.style.background = '#F0FDF4';
-            }
+<script>
+    function updateFileStatus(input, statusId) {
+        const statusDiv = document.getElementById(statusId);
+        const dropZone = input.parentElement;
+        
+        if (input.files && input.files.length > 0) {
+            // Update text with file name
+            statusDiv.innerHTML = `<i class="fa-solid fa-check me-1"></i> ${input.files[0].name}`;
+            statusDiv.style.display = 'block';
+            
+            // Change drop zone styling to match dark theme "success" state
+            dropZone.style.borderColor = 'var(--success)';
+            dropZone.style.background = 'rgba(16, 185, 129, 0.1)';
         }
-    </script>
-</body>
+    }
+</script>
 
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
 </html>
