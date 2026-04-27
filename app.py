@@ -23,8 +23,11 @@ import logger # Import logger to overwrite logs
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = os.path.join(BASE_DIR, 'uploads')
 MODELS_DIR = os.path.join(BASE_DIR, 'models')
+DATA_DIR = os.path.join(BASE_DIR, 'data')
+
 os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
 os.makedirs(MODELS_DIR, exist_ok=True)
+os.makedirs(DATA_DIR, exist_ok=True)
 
 app.secret_key = 'secretkey'  #secret key for session management
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///users.db'
@@ -112,7 +115,7 @@ def login():
             session['user_id'] = user.id
             session['user_name'] = user.name
             flash('Login successful!', 'success')
-            return redirect(url_for('dashboard'))
+            return redirect(url_for('upload'))
         else:
             print("DEBUG: Password match failed or user NOT found")
             flash('Invalid email or password.', 'error')
@@ -262,10 +265,12 @@ def upload():
         df_ref = X.head(100).copy() # Use X (features only)
         # Standardize column names for the tools (f0, f1...)
         df_ref.columns = [f'f{j}' for j in range(len(df_ref.columns))]
+        if actual_target_col:
+            df_ref['target'] = df[actual_target_col].head(100).values
         df_ref.to_csv(ref_path, index=False)
         print(f"DEBUG: Updated baseline reference at {ref_path}")
         
-        return redirect(url_for('home'))
+        return redirect(url_for('dashboard'))
         
     except Exception as e:
         import traceback
@@ -277,7 +282,7 @@ def simulate(scenario):
     # Trigger generation logic
     # We clear logs to make the impact immediate and obvious
     generate_mock_traffic(scenario=scenario, clear_logs=True)
-    return redirect(url_for('home'))
+    return redirect(url_for('dashboard'))
 
 @app.route('/repair')
 def repair():
@@ -289,7 +294,7 @@ def repair():
         # just regenerate healthy traffic to prove it works.
         # For demo: We generate healthy traffic immediately to simulate "After-Repair" state
         generate_mock_traffic(scenario='healthy', clear_logs=True)
-        return redirect(url_for('home', repaired='true'))
+        return redirect(url_for('dashboard', repaired='true'))
     else:
         return "Repair Failed", 500
 

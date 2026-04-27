@@ -41,12 +41,9 @@ class SelfAuditingAgent:
         report["metrics"]["health"] = health
         
         # Rule: If confidence drops below 0.6, flag it.
-        if isinstance(health, dict) and "avg_confidence" in health:
-            if health.get("avg_confidence", 1.0) < 0.6:
-                report["issues"].append("Low Average Confidence detected.")
-                report["risk_score"] += (20 * self.multiplier)
-        elif isinstance(health, dict) and "status" in health and health["status"] == "No data":
-             report["issues"].append("System health check: Waiting for more data...")
+        if health.get("avg_confidence", 1.0) < 0.6:
+            report["issues"].append("Low Average Confidence detected.")
+            report["risk_score"] += (20 * self.multiplier)
 
         # --- STEP 2: Check Drift ---
         drift = tools.check_feature_drift(recent_window=50)
@@ -60,20 +57,22 @@ class SelfAuditingAgent:
                     report["issues"].append(f"Major Data Drift detected in {feature} (Score: {data['drift_score']:.2f})")
         elif isinstance(drift, dict) and "error" in drift:
             report["issues"].append(f"Audit limitation: {drift['error']}")
+        elif isinstance(drift, dict) and "status" in drift:
+             report["issues"].append(f"System Monitor: {drift['status']}")
         
         if drift_count > 0:
             report["risk_score"] += (drift_count * 15 * self.multiplier) 
 
         # --- STEP 3: Smart Performance Check ---
         # Get recent performance from health data
-        accuracy = health.get("estimated_accuracy") if isinstance(health, dict) else None
+        accuracy = health.get("estimated_accuracy")
         
         # Get recent prediction stats
         recents = tools.get_recent_predictions(limit=50)
-        if isinstance(recents, list) and recents and "error" not in recents[0]:
+        if recents:
             # Check for label imbalance (formerly "failure rate")
             # We only penalize this if accuracy is also low or unknown.
-            positives = [r for r in recents if isinstance(r, dict) and r.get('prediction') == 1]
+            positives = [r for r in recents if r['prediction'] == 1]
             pos_rate = len(positives) / len(recents)
             report["metrics"]["pos_rate"] = pos_rate
             report["metrics"]["fail_rate"] = pos_rate # Legacy alias for dashboard UI

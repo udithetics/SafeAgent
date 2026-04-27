@@ -14,6 +14,9 @@ LOG_FILE = os.path.join(BASE_DIR, 'data', 'predictions.csv')
 
 def initialize_log():
     """Creates the CSV file with headers if it doesn't exist."""
+    # Ensure data directory exists
+    os.makedirs(os.path.dirname(LOG_FILE), exist_ok=True)
+    
     if not os.path.exists(LOG_FILE):
         headers = ['timestamp', 'f0', 'f1', 'f2', 'f3', 'f4', 'prediction', 'confidence', 'model_version', 'ground_truth']
         with open(LOG_FILE, 'w', newline='') as f:

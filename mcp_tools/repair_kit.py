@@ -48,8 +48,24 @@ def perform_auto_repair(target_data_path=None):
     
     # 3. RETRAIN MODEL
     print("🔄 Retraining Model on Cleaned Data...")
-    X = df_clean.drop('target', axis=1)
-    y = df_clean['target']
+    
+    # Identify target column
+    target_col = 'target'
+    if target_col not in df_clean.columns:
+        # Try to find common target names
+        target_names = ['target', 'healthy', 'label', 'class', 'output', 'y', 'status']
+        target_col = next((c for c in df_clean.columns if c.lower() in target_names), None)
+        
+    if not target_col:
+        # Fallback: assume last column is target if more than 1 column exists
+        if len(df_clean.columns) > 1:
+            target_col = df_clean.columns[-1]
+        else:
+            return {"success": False, "error": "Could not identify target column for retraining"}
+
+    X = df_clean.drop(target_col, axis=1)
+    # Ensure target is discrete for classification
+    y = df_clean[target_col].round().astype(int)
     
     new_model = RandomForestClassifier(n_estimators=100, random_state=42)
     new_model.fit(X, y)
